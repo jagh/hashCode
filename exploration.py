@@ -32,7 +32,11 @@ class GridCutter:
 
     def sliceValidation(self, new_slice):
         """
-        Check if the slice can be accepted
+        Check if the slice can be accepted:
+
+        1 Rule) If the slice have the min_ingredients (mushrooms and tomatoes)
+        2 Rule) Total area of each slice must be at most max_area
+        3 Rule) Each cell of the pizza must be in one slice
         """
         mroom_count = 0
         tomato_count = 0
@@ -45,28 +49,31 @@ class GridCutter:
                 tomato_count += 1
             cell += 1
 
+        ## Check the Rule 1
         if mroom_count >= self.min_ings and tomato_count >= self.min_ings:
             self.slices.append(new_slice)
-            print("Slices: {}".format(self.slices))
-
+            print("Accepted Slices: {}".format(self.slices))
 
 
     def slicer(self, row, col):
         """
-        Slice propositon
+        Slice propositon:
+
+        1) Build 1-dim rectangles
+        2) Build n-dim rectangles
         """
         # print("cell: {},{}".format(row, col))
         # print("grid: {}".format(self.grid[row]))
-        new_slice = list(itertools.islice(self.grid[row],col, self.max_area))
-        # print("slice: {}".format(new_slice))
 
+        ## Build 1-dim rectangles
+        new_slice = list(itertools.islice(self.grid[row],col, self.max_area))
         if len(new_slice) >= 2:
             self.sliceValidation(new_slice)
 
 
     def explorer(self):
         """
-        Grid exploration
+        Grid exploration cell by cell
         """
         slices_list = []
         for row in range(self.row_count):
@@ -96,10 +103,10 @@ def read_file(filename):
 
     ## closing the file
     f.close()
-    print("grid: {}".format(grid))
-    print("max_area: {}".format(max_area))
-    print("min_ingredient: {}".format(min_ingredient))
 
+    # print("grid: {}".format(grid))
+    # print("max_area: {}".format(max_area))
+    # print("min_ingredient: {}".format(min_ingredient))
     return first_line, grid
 
 
