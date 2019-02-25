@@ -27,7 +27,8 @@ class GridCutter:
         self.max_area = 4 #max_area
 
         ## Scoring
-        self.slices = deque()
+        # self.slices = deque()
+        self.slices = []
 
 
     def sliceValidation(self, new_slice):
@@ -51,25 +52,48 @@ class GridCutter:
 
         ## Check the Rule 1
         if mroom_count >= self.min_ings and tomato_count >= self.min_ings:
-            self.slices.append(new_slice)
-            print("Accepted Slices: {}".format(self.slices))
+            return True
+            # self.slices.append(new_slice)
+            # print("Accepted Slices: {}".format(self.slices))
+
+        return False
 
 
     def slicer(self, row, col):
         """
-        Slice propositon:
+        Slice proposition:
+        1) Build nodes
 
         1) Build 1-dim rectangles
         2) Build n-dim rectangles
         """
-        # print("cell: {},{}".format(row, col))
-        # print("grid: {}".format(self.grid[row]))
+        ## Build Right Node
+        new_slice = list(itertools.islice(self.grid[row], col, col+2))
+        right_node = self.sliceValidation(new_slice)
+        ## If Slice is True save the slice cells
+        if right_node:
+            self.slices.append((row, col))
+            self.slices.append((row, col+1))
+            print("right_slice: {}".format(new_slice))
+            # print("cell_beg: {}, {}".format(row, col))
+            # print("cell_end: {}, {}".format(row, col+1))
 
-        ## Build 1-dim rectangles
-        new_slice = list(itertools.islice(self.grid[row],col, self.max_area))
-        if len(new_slice) >= 2:
-            self.sliceValidation(new_slice)
 
+        ## Build bottom Node
+        try:
+            cell_beg = list(itertools.islice(self.grid[row], col, col+1))
+            cell_end = list(itertools.islice(self.grid[row+1], col, col+1))
+            new_slice2=(cell_beg[0], cell_end[0])
+            bottom_node = self.sliceValidation(new_slice2)
+            if bottom_node == True:
+                self.slices.append((row, col))
+                self.slices.append((row+1, col))
+                print("bottom_slice: {}".format(new_slice2))
+                # print("cell_beg: {}, {}".format(row, col))
+                # print("cell_end: {}, {}".format(row+1, col))
+        except IndexError:
+            ## Check if not are the last row
+            pass
 
     def explorer(self):
         """
@@ -80,8 +104,13 @@ class GridCutter:
             c_beg = 0
             c_end = 0
             while c_end < self.col_count:
-                self.slicer(row, c_end)
+                try:
+                    self.slices.index((row, c_end))
+                except ValueError:
+                    ## The cell is not used
+                    self.slicer(row, c_end)
                 c_end += 1
+        print("Accepted Slices: {}".format(self.slices))
 
 
 def read_file(filename):
@@ -100,18 +129,17 @@ def read_file(filename):
     grid = []
     for i in range(row_count):
         grid.append(f.readline().rstrip())
-
     ## closing the file
     f.close()
 
-    # print("grid: {}".format(grid))
+    print("grid: {}".format(grid))
     # print("max_area: {}".format(max_area))
     # print("min_ingredient: {}".format(min_ingredient))
     return first_line, grid
 
 
 def main():
-    first_line, grid = read_file('dataset/a_example.in') #b_small.in')
+    first_line, grid = read_file('dataset/a_example.in')   #b_small.in')
     gc = GridCutter(grid, first_line)
     gc.explorer()
 
