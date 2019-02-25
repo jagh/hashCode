@@ -27,17 +27,33 @@ class GridCutter:
         self.max_area = 4 #max_area
 
         ## Scoring
-        # self.slices = deque()
-        self.slices = []
+        self.cells_used = []
+        self.node_count = 0
+        self.nodes = {}
+
+
+    def extendSlice(self):
+        """
+        From nodes pick one node an extend their slice.
+
+        node format: num_node = (cell_beg, cell_end)
+        grid format: ['TTTTT', 'TMMMT', 'TTTTT']]
+        cells_used: List((row, col), ...)
+        """
+
+        print("{}".format('-'*50))
+        print("Extend slice:")
+        print("Nodes: {}".format(self.nodes))
+        print("Cells used: {}".format(self.cells_used))
 
 
     def sliceValidation(self, new_slice):
         """
         Check if the slice can be accepted:
 
-        1 Rule) If the slice have the min_ingredients (mushrooms and tomatoes)
-        2 Rule) Total area of each slice must be at most max_area
-        3 Rule) Each cell of the pizza must be in one slice
+        1 Rule) Each cell of the pizza must be in one slice
+        2 Rule) If the slice have the min_ingredients (mushrooms and tomatoes)
+        3 Rule) Total area of each slice must be at most max_area
         """
         mroom_count = 0
         tomato_count = 0
@@ -50,7 +66,7 @@ class GridCutter:
                 tomato_count += 1
             cell += 1
 
-        ## Check the Rule 1
+        ## Check the Rule 2
         if mroom_count >= self.min_ings and tomato_count >= self.min_ings:
             return True
             # self.slices.append(new_slice)
@@ -67,27 +83,41 @@ class GridCutter:
         1) Build 1-dim rectangles
         2) Build n-dim rectangles
         """
-        ## Build Right Node
+
+        ## Right Node
         new_slice = list(itertools.islice(self.grid[row], col, col+2))
         right_node = self.sliceValidation(new_slice)
         ## If Slice is True save the slice cells
         if right_node:
-            self.slices.append((row, col))
-            self.slices.append((row, col+1))
+            ## memory for used cells
+            self.cells_used.append((row, col))
+            self.cells_used.append((row, col+1))
+
+            ## Node dict with format: node_count = (cell_beg, cell_end)
+            self.node_count += 1
+            self.nodes[self.node_count] = ((row, col), (row, col+1))
+
+            ## Debbug
             print("right_slice: {}".format(new_slice))
             # print("cell_beg: {}, {}".format(row, col))
             # print("cell_end: {}, {}".format(row, col+1))
 
 
-        ## Build bottom Node
+        ## Bottom Node
         try:
             cell_beg = list(itertools.islice(self.grid[row], col, col+1))
             cell_end = list(itertools.islice(self.grid[row+1], col, col+1))
             new_slice2=(cell_beg[0], cell_end[0])
             bottom_node = self.sliceValidation(new_slice2)
             if bottom_node == True:
-                self.slices.append((row, col))
-                self.slices.append((row+1, col))
+                ## memory for used cells
+                self.cells_used.append((row, col))
+                self.cells_used.append((row+1, col))
+
+                ## Node dict with format: node_count = (cell_beg, cell_end)
+                self.node_count += 1
+                self.nodes[self.node_count] = ((row, col), (row+1, col))
+
                 print("bottom_slice: {}".format(new_slice2))
                 # print("cell_beg: {}, {}".format(row, col))
                 # print("cell_end: {}, {}".format(row+1, col))
@@ -105,12 +135,11 @@ class GridCutter:
             c_end = 0
             while c_end < self.col_count:
                 try:
-                    self.slices.index((row, c_end))
+                    self.cells_used.index((row, c_end))
                 except ValueError:
                     ## The cell is not used
                     self.slicer(row, c_end)
                 c_end += 1
-        print("Accepted Slices: {}".format(self.slices))
 
 
 def read_file(filename):
@@ -139,9 +168,10 @@ def read_file(filename):
 
 
 def main():
-    first_line, grid = read_file('dataset/a_example.in')   #b_small.in')
+    first_line, grid = read_file('dataset/a_example.in') # b_small.in') #b_small.in')
     gc = GridCutter(grid, first_line)
     gc.explorer()
+    gc.extendSlice()
 
 
 if __name__ == "__main__":
