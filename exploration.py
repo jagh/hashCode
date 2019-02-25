@@ -46,6 +46,10 @@ class GridCutter:
         print("Nodes: {}".format(self.nodes))
         print("Cells used: {}".format(self.cells_used))
 
+        ## Here we can create the code to expand slices
+        ##
+
+
 
     def sliceValidation(self, new_slice):
         """
@@ -124,6 +128,9 @@ class GridCutter:
         except IndexError:
             ## Check if not are the last row
             pass
+
+        ## end slicer
+
 
     def explorer(self):
         """
