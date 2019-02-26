@@ -46,6 +46,10 @@ class GridCutter:
         print("Nodes: {}".format(self.nodes))
         print("Cells used: {}".format(self.cells_used))
 
+        ## Here we can create the code to expand slices
+        ##
+
+
 
     def sliceValidation(self, new_slice):
         """
@@ -84,7 +88,8 @@ class GridCutter:
         2) Build n-dim rectangles
         """
 
-        ## Right Node
+        ## Right Node 1-dim
+        #######################################################################
         new_slice = list(itertools.islice(self.grid[row], col, col+2))
         right_node = self.sliceValidation(new_slice)
         ## If Slice is True save the slice cells
@@ -103,7 +108,8 @@ class GridCutter:
             # print("cell_end: {}, {}".format(row, col+1))
 
 
-        ## Bottom Node
+        ## Bottom Node 1-dim
+        #######################################################################
         try:
             cell_beg = list(itertools.islice(self.grid[row], col, col+1))
             cell_end = list(itertools.islice(self.grid[row+1], col, col+1))
@@ -124,6 +130,58 @@ class GridCutter:
         except IndexError:
             ## Check if not are the last row
             pass
+
+
+        ## Left Node 1-dim
+        #######################################################################
+        try:
+            new_slice = list(itertools.islice(self.grid[row], col-1, col+1))
+            # new_slice2 = self.grid[row][col-1: col+1]
+            left_node = self.sliceValidation(new_slice)
+
+            ## If Slice is True save the slice cells
+            if left_node:
+                ## memory for used cells
+                self.cells_used.append((row, col))
+                self.cells_used.append((row, col-1))
+
+                ## Node dict with format: node_count = (cell_beg, cell_end)
+                self.node_count += 1
+                self.nodes[self.node_count] = ((row, col), (row, col-1))
+
+                ## Debbug
+                print("left_slice: {}".format(new_slice))
+                # print("cell_beg: {}, {}".format(row, col))
+                # print("cell_end: {}, {}".format(row, col-1))
+        except ValueError:
+            ## Check if there is not a left cell
+            pass
+
+        ## Up Node 1-dim
+        #######################################################################
+        try:
+            cell_beg = list(itertools.islice(self.grid[row], col, col+1))
+            cell_end = list(itertools.islice(self.grid[row-1], col, col+1))
+            new_slice2=(cell_beg[0], cell_end[0])
+            up_node = self.sliceValidation(new_slice2)
+            if up_node == True:
+                ## memory for used cells
+                self.cells_used.append((row, col))
+                self.cells_used.append((row-1, col))
+
+                ## Node dict with format: node_count = (cell_beg, cell_end)
+                self.node_count += 1
+                self.nodes[self.node_count] = ((row, col), (row-1, col))
+
+                print("up_slice: {}".format(new_slice2))
+                # print("cell_beg: {}, {}".format(row, col))
+                # print("cell_end: {}, {}".format(row-1, col))
+        except IndexError:
+            ## Check if not are the last row
+            pass
+
+        ## end slicer
+
 
     def explorer(self):
         """
