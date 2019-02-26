@@ -97,6 +97,10 @@ class GridCutter:
         ### Add Checker for max number of cell by slice rule
 
 
+        ## Here we can create the code to expand slices
+        ##
+
+
 
     def sliceValidation(self, new_slice):
         """
@@ -220,6 +224,7 @@ class GridCutter:
                 self.node_count += 1
                 self.nodes[self.node_count] = ((row, col), (row-1, col))
 
+
                 # Debbug
                 # print("up_slice: {}".format(new_slice2))
                 # print("cell_beg: {}, {}".format(row, col))
@@ -230,6 +235,7 @@ class GridCutter:
 
         ## end slicer
 
+        
     def explorer(self):
         """
         Grid exploration cell by cell
