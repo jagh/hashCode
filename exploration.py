@@ -9,7 +9,7 @@ import sys
 import itertools
 from collections import deque
 from collections import OrderedDict
-from sortedcontainers import SortedDict
+#from sortedcontainers import SortedDict
 
 
 class GridCutter:
