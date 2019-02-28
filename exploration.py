@@ -144,7 +144,11 @@ class GridCutter:
 
         ## Right Node 1-dim
         #######################################################################$
-        new_slice = list(itertools.islice(self.grid[row], col, col+1+(self.min_ings*2)))
+        ## n-dim blocks
+        if self.min_ings > 1:
+            new_slice = list(itertools.islice(self.grid[row], col, col+1+1 ))
+        else:
+            new_slice = list(itertools.islice(self.grid[row], col, col+1+(self.min_ings*2)))
         # print("new_slice: {}".format(new_slice))
         right_node = self.sliceValidation(new_slice)
         ## If Slice is True save the slice cells
@@ -167,7 +171,12 @@ class GridCutter:
         #######################################################################
         try:
             cell_beg = list(itertools.islice(self.grid[row], col, col+1))
-            cell_end = list(itertools.islice(self.grid[row+1], col, col+1))
+            ## n-dim blocks
+            if self.min_ings > 1:
+                cell_end = list(itertools.islice(self.grid[row+1], col, col+1))
+            else:
+                cell_end = list(itertools.islice(self.grid[row+(self.min_ings*2)], col, col+1))
+
             new_slice2=(cell_beg[0], cell_end[0])
             bottom_node = self.sliceValidation(new_slice2)
             if bottom_node == True:
@@ -191,7 +200,11 @@ class GridCutter:
         ## Left Node 1-dim
         #######################################################################
         try:
-            new_slice = list(itertools.islice(self.grid[row], col-1, col+1))
+            ## n-dim blocks
+            if self.min_ings > 1:
+                new_slice = list(itertools.islice(self.grid[row], col-1, col+1))
+            else:
+                new_slice = list(itertools.islice(self.grid[row], col-(self.min_ings*2), col+1))
             # new_slice2 = self.grid[row][col-1: col+1]
             left_node = self.sliceValidation(new_slice)
 
@@ -218,7 +231,12 @@ class GridCutter:
         try:
             if row-1 > 0:
                 cell_beg = list(itertools.islice(self.grid[row], col, col+1))
-                cell_end = list(itertools.islice(self.grid[row-1], col, col+1))
+                ## n-dim blocks
+                if self.min_ings > 1:
+                    cell_end = list(itertools.islice(self.grid[row-1], col, col+1))
+                else:
+                    cell_end = list(itertools.islice(self.grid[row-(self.min_ings*2)], col, col+1))
+                
                 new_slice2=(cell_beg[0], cell_end[0])
                 up_node = self.sliceValidation(new_slice2)
                 if up_node == True:
