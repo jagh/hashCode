@@ -143,8 +143,9 @@ class GridCutter:
         """
 
         ## Right Node 1-dim
-        #######################################################################
-        new_slice = list(itertools.islice(self.grid[row], col, col+1+self.min_ings))
+        #######################################################################$
+        new_slice = list(itertools.islice(self.grid[row], col, col+1+(self.min_ings*2)))
+        # print("new_slice: {}".format(new_slice))
         right_node = self.sliceValidation(new_slice)
         ## If Slice is True save the slice cells
         if right_node:
@@ -280,8 +281,8 @@ def read_file(filename):
 
     # Debuug
     # print("grid: {}".format(grid))
-    # print("max_area: {}".format(max_area))
-    # print("min_ingredient: {}".format(min_ingredient))
+    print("max_area: {}".format(max_area))
+    print("min_ingredient: {}".format(min_ingredient))
     return first_line, grid
 
 
@@ -305,13 +306,15 @@ def output(list_output, file_name):
 
 
 def main():
-    file_name='a_example'
+    file_name='a_example'   #'c_medium' #'a_example'
     first_line, grid = read_file('dataset/'+file_name+'.in') #b_small.in')  # #b_small.in')
 
     gc = GridCutter(grid, first_line)
     gc.explorer()
     # gc.extendSlice()
     # gc.groupingNodes()
+
+    ### Write
     out_slices = gc.sliceComposition()
     output(out_slices, file_name)
 
