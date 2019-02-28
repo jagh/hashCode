@@ -11,6 +11,10 @@ from collections import deque
 from collections import OrderedDict
 from sortedcontainers import SortedDict
 
+class SlideShow:
+    def __init__(self):
+        pass
+
 
 
 def read_file(file_path):
