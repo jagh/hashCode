@@ -35,6 +35,7 @@ class GridCutter:
 
         ## Extend Slice
         self.slices_to_file = []
+        self.cell_slice_used = []
 
 
 
@@ -45,15 +46,13 @@ class GridCutter:
         Input format: [(num_node[0], (cell_beg, cell_end)), ...
         Output format: [(cell_end[0], [cell_beg[0], cell_beg[1], cell_beg[2]]), ...
         """
-        # group_nodes = OrderedDict()
-        group_nodes = SortedDict()
+        group_nodes = OrderedDict()
+        # group_nodes = SortedDict()
 
         ## Gruped node as FIFO order
         for key, val in self.nodes.iteritems():
             if val[1] in group_nodes: group_nodes[val[1]].append(val[0])
             else: group_nodes[val[1]] = [val[0]]
-
-        return group_nodes
 
         ## Debbug
         # print("{}".format('-'*50))
@@ -80,18 +79,29 @@ class GridCutter:
             min_row = max_row = key[0]
             min_col = max_col = key[1]
 
-            ## Find the min and max row and cols
-            for cell in val:
-                if cell[0] < key[0]: min_row = cell[0]
-                if cell[0] > key[0]: max_row = cell[0]
-                if cell[1] < key[1]: min_col = cell[1]
-                if cell[1] > key[1]: max_col = cell[1]
+            ## For max_are%2
+            # print("num ")
+            if self.max_area%2 == 0:
 
-                ## Debuug
-                ## print("cell: {} :: key: {}".format(cell, key))
+                ## Find the min and max row and cols
+                for cell in val:
+                    ## Check if the cell is used in another slice
+                    try:
+                        self.cell_slice_used.index(cell)
+                        # print("val: {}".format(cell))
+                    except ValueError:
+                        if cell[0] < key[0]: min_row = cell[0]
+                        if cell[0] > key[0]: max_row = cell[0]
+                        if cell[1] < key[1]: min_col = cell[1]
+                        if cell[1] > key[1]: max_col = cell[1]
+                        self.cell_slice_used.append(cell)
+                        # self.cells_used.append((row, col))
 
-            ## Added the last slices
-            self.slices_to_file.append(((min_row, min_col), (max_row, max_col)))
+                    ## Debuug
+                    ## print("cell: {} :: key: {}".format(cell, key))
+
+                ## Added the last slices
+                self.slices_to_file.append(((min_row, min_col), (max_row, max_col)))
 
         print("Num Slices: {}".format(len(self.slices_to_file)))
         print("slices_to_file: {}".format(self.slices_to_file))
@@ -146,9 +156,10 @@ class GridCutter:
         #######################################################################$
         ## n-dim blocks
         if self.min_ings > 1:
-            new_slice = list(itertools.islice(self.grid[row], col, col+1+1 ))
-        else:
             new_slice = list(itertools.islice(self.grid[row], col, col+1+(self.min_ings*2)))
+        else:
+            new_slice = list(itertools.islice(self.grid[row], col, col+1+1 ))
+
         # print("new_slice: {}".format(new_slice))
         right_node = self.sliceValidation(new_slice)
         ## If Slice is True save the slice cells
@@ -173,9 +184,9 @@ class GridCutter:
             cell_beg = list(itertools.islice(self.grid[row], col, col+1))
             ## n-dim blocks
             if self.min_ings > 1:
-                cell_end = list(itertools.islice(self.grid[row+1], col, col+1))
-            else:
                 cell_end = list(itertools.islice(self.grid[row+(self.min_ings*2)], col, col+1))
+            else:
+                cell_end = list(itertools.islice(self.grid[row+1], col, col+1))
 
             new_slice2=(cell_beg[0], cell_end[0])
             bottom_node = self.sliceValidation(new_slice2)
@@ -202,9 +213,9 @@ class GridCutter:
         try:
             ## n-dim blocks
             if self.min_ings > 1:
-                new_slice = list(itertools.islice(self.grid[row], col-1, col+1))
-            else:
                 new_slice = list(itertools.islice(self.grid[row], col-(self.min_ings*2), col+1))
+            else:
+                new_slice = list(itertools.islice(self.grid[row], col-1, col+1))
             # new_slice2 = self.grid[row][col-1: col+1]
             left_node = self.sliceValidation(new_slice)
 
@@ -233,10 +244,10 @@ class GridCutter:
                 cell_beg = list(itertools.islice(self.grid[row], col, col+1))
                 ## n-dim blocks
                 if self.min_ings > 1:
-                    cell_end = list(itertools.islice(self.grid[row-1], col, col+1))
-                else:
                     cell_end = list(itertools.islice(self.grid[row-(self.min_ings*2)], col, col+1))
-                
+                else:
+                    cell_end = list(itertools.islice(self.grid[row-1], col, col+1))
+
                 new_slice2=(cell_beg[0], cell_end[0])
                 up_node = self.sliceValidation(new_slice2)
                 if up_node == True:
@@ -299,8 +310,8 @@ def read_file(filename):
 
     # Debuug
     # print("grid: {}".format(grid))
-    print("max_area: {}".format(max_area))
-    print("min_ingredient: {}".format(min_ingredient))
+    # print("max_area: {}".format(max_area))
+    # print("min_ingredient: {}".format(min_ingredient))
     return first_line, grid
 
 
@@ -324,7 +335,7 @@ def output(list_output, file_name):
 
 
 def main():
-    file_name='a_example'   #'c_medium' #'a_example'
+    file_name='a_example'   #'b_small'   #   #'c_medium'
     first_line, grid = read_file('dataset/'+file_name+'.in') #b_small.in')  # #b_small.in')
 
     gc = GridCutter(grid, first_line)
