@@ -339,35 +339,6 @@ class GridCutter:
                 c_end += 1
 
 
-# def read_file(filename):
-#     """
-#     Read the file.
-#     Return the first_line and the grid.
-#     """
-#     ## load the file
-#     f = open(filename, 'r')
-#     len_records = f.readline()
-#     print(len_records)
-#
-#     ## setting the input variables
-#     # row_count, column_count, min_ingredient, max_area = tuple(map(int, first_line.split(' ')))
-#
-#     ## Creating the pizza grid and populating it
-#     grid = []
-#     for i in range(int(len_records)):
-#         cardinality, len_tang, list(itertools.islice(self.grid[row-1], col, col+1)) = tuple(map(int, i.split(' ')))
-#         print(cardinality)
-#
-#         # grid.append(f.readline().rstrip())
-#     ## closing the file
-#     f.close()
-#
-#     # Debuug
-#     # print("grid: {}".format(grid))
-#     # print("max_area: {}".format(max_area))
-#     # print("min_ingredient: {}".format(min_ingredient))
-#     # return first_line, grid
-
 def read_file(file_path):
     items_corpus = []
     f = open(file_path, 'r')
