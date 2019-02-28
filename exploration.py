@@ -220,6 +220,9 @@ class GridCutter:
         ## n-dim blocks
         if self.min_ings > 1:
             new_slice = list(itertools.islice(self.grid[row], col, col+1+(self.min_ings*2)))
+
+
+        ## 1-dim blocks    
         else:
             new_slice = list(itertools.islice(self.grid[row], col, col+1+1 ))
 
@@ -397,7 +400,7 @@ def output(list_output, file_name):
 
 
 def main():
-    file_name='a_example'   #'b_small'  #'c_medium'
+    file_name='b_small'     #'a_example'  #'c_medium'
     first_line, grid = read_file('dataset/'+file_name+'.in') #b_small.in')  # #b_small.in')
 
     gc = GridCutter(grid, first_line)
