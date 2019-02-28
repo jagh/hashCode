@@ -144,7 +144,7 @@ class GridCutter:
 
         ## Right Node 1-dim
         #######################################################################
-        new_slice = list(itertools.islice(self.grid[row], col, col+2))
+        new_slice = list(itertools.islice(self.grid[row], col, col+1+self.min_ings))
         right_node = self.sliceValidation(new_slice)
         ## If Slice is True save the slice cells
         if right_node:
@@ -300,7 +300,6 @@ def output(list_output, file_name):
                     cel = list_output[i][j][z]
                     outline.append(str(cel) + " ")
             output_final.write("".join(outline) + "\n")
-
 
 
 
