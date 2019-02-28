@@ -215,24 +215,25 @@ class GridCutter:
         ## Up Node 1-dim
         #######################################################################
         try:
-            cell_beg = list(itertools.islice(self.grid[row], col, col+1))
-            cell_end = list(itertools.islice(self.grid[row-1], col, col+1))
-            new_slice2=(cell_beg[0], cell_end[0])
-            up_node = self.sliceValidation(new_slice2)
-            if up_node == True:
-                ## memory for used cells
-                self.cells_used.append((row, col))
-                self.cells_used.append((row-1, col))
+            if row-1 > 0:
+                cell_beg = list(itertools.islice(self.grid[row], col, col+1))
+                cell_end = list(itertools.islice(self.grid[row-1], col, col+1))
+                new_slice2=(cell_beg[0], cell_end[0])
+                up_node = self.sliceValidation(new_slice2)
+                if up_node == True:
+                    ## memory for used cells
+                    self.cells_used.append((row, col))
+                    self.cells_used.append((row-1, col))
 
-                ## Node dict with format: node_count = (cell_beg, cell_end)
-                self.node_count += 1
-                self.nodes[self.node_count] = ((row, col), (row-1, col))
+                    ## Node dict with format: node_count = (cell_beg, cell_end)
+                    self.node_count += 1
+                    self.nodes[self.node_count] = ((row, col), (row-1, col))
 
 
-                # Debbug
-                # print("up_slice: {}".format(new_slice2))
-                # print("cell_beg: {}, {}".format(row, col))
-                # print("cell_end: {}, {}".format(row-1, col))
+                    # Debbug
+                    # print("up_slice: {}".format(new_slice2))
+                    # print("cell_beg: {}, {}".format(row, col))
+                    # print("cell_end: {}, {}".format(row-1, col))
         except IndexError:
             ## Check if not are the last row
             pass
@@ -305,7 +306,7 @@ def output(list_output):
 
 
 def main():
-    first_line, grid = read_file('dataset/a_example.in') # b_small.in') #b_small.in')
+    first_line, grid = read_file('dataset/b_small.in')  #a_example.in') #b_small.in')
     gc = GridCutter(grid, first_line)
     gc.explorer()
     # gc.extendSlice()
