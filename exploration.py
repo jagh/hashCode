@@ -61,9 +61,8 @@ class GridCutter:
         # print("Extend slice:")
         # print("Nodes: {}".format(self.nodes))
         # print("Cells used: {}".format(self.cells_used))
-        print("Fifo order: {}".format(group_nodes))
+        # print("Fifo order: {}".format(group_nodes))
         return group_nodes
-
 
     def sliceComposition(self):
         """
@@ -73,7 +72,6 @@ class GridCutter:
 
         ## Buil Groups of Nodes
         group_nodes = self.groupingNodes()
-
 
         ## Build Slice in n-dimension
         ## From the FIFO Groups of Nodes
@@ -96,7 +94,17 @@ class GridCutter:
                         if cell[0] > key[0]: max_row = cell[0]
                         if cell[1] < key[1]: min_col = cell[1]
                         if cell[1] > key[1]: max_col = cell[1]
+
+                        ## Added to used cells by slice
                         self.cell_slice_used.append(cell)
+
+                ############################################################
+                ## Check the minimum number of ingredients per slice
+                # new_slice = list(itertools.islice(self.grid[row], col, col+1+(self.min_ings*2)))c
+                # print(self.grid[min_row])
+
+                ## Added to used cells by slice
+                self.cell_slice_used.append(key)
 
                 ## Added the last slices
                 self.slices_to_file.append(((min_row, min_col), (max_row, max_col)))
@@ -127,6 +135,9 @@ class GridCutter:
                         if cell[0] > key[0]: max_row = cell[0]
                         self.cell_slice_used.append(cell)
 
+                    ## Added to used cells by slice
+                    self.cell_slice_used.append(key)
+
                     ## Added the last slices
                     self.slices_to_file.append(((min_row, min_col), (max_row, max_col)))
 
@@ -141,6 +152,9 @@ class GridCutter:
                         if cell[1] < key[1]: min_col = cell[1]
                         if cell[1] > key[1]: max_col = cell[1]
                         self.cell_slice_used.append(cell)
+
+                    ## Added to used cells by slice
+                    self.cell_slice_used.append(key)
 
                     ## Added the last slices
                     self.slices_to_file.append(((min_row, min_col), (max_row, max_col)))
@@ -164,8 +178,6 @@ class GridCutter:
 
         ## Here we can create the code to expand slices
         ##
-
-
 
     def sliceValidation(self, new_slice):
         """
@@ -321,7 +333,6 @@ class GridCutter:
 
         ## end slicer
 
-
     def explorer(self):
         """
         Grid exploration cell by cell
@@ -386,7 +397,7 @@ def output(list_output, file_name):
 
 
 def main():
-    file_name='a_example'   #'b_small'   #   #'c_medium'
+    file_name='a_example'   #'b_small'  #'c_medium'
     first_line, grid = read_file('dataset/'+file_name+'.in') #b_small.in')  # #b_small.in')
 
     gc = GridCutter(grid, first_line)
