@@ -13,19 +13,28 @@ from collections import OrderedDict
 DataSildes = collections.namedtuple('DataSildes', 'cardinality size tags')
 
 class Photo:
-    def __init__(self, aligment, nb, tags):
-        self.aligment = aligment
+    def __init__(self, orientation, nb, tags):
+        self.orientation = orientation
         self.nb = nb
         self.tags = tags
 
+    def getOrientation(self):
+        return self.orientation
+
     def getTags(self):
+        return self.tags
+
+    def toStr(self):
         return self.tags
 
 
 class Slide:
     def __init__(self, photo):
         self.photo = photo
-        self.tags
+        self.tags = photo.getTags()
+
+    def getTags(self):
+        return self.tags
 
     def intersection(self, toCompare):
         return list(set(toCompare.getTags()) & set(self.tags))
@@ -44,8 +53,8 @@ class SlideShow:
     def __init__(self):
         self.slideshow = list()
 
-    def addPhoto(self, photo):
-        self.slideshow.append(photo)
+    def addSlide(self, slide):
+        self.slideshow.append(slide)
 
     def evaluate(self):
         total_score = 0
@@ -56,6 +65,7 @@ class SlideShow:
             #slide1.diff(slide2)
             #slide2.diff(slide1)
             total_score += slide1.score(slide2)
+        return total_score
 
 
 def read_file(file_path):
@@ -63,12 +73,12 @@ def read_file(file_path):
     f = open(file_path, 'r')
     f.readline()
     for line in f:
+        line = line.rstrip('\n')
         content = line.split(' ')
         # DataSplit(name='cardinality', inputs=X_train, targets=y_train)
         # DataSildes
         tags = []
         count = 0
-        print content
         for i in content:
             if count == 0:
                 card=i
@@ -87,10 +97,24 @@ def read_file(file_path):
 
 
 def main():
-    file_name='a_example'   #'b_small'   #   #'c_medium'
+    photolist = list()
+    slidelist = list()
+    slideshow = SlideShow()
+    file_name= 'b_lovely_landscapes' #''a_example'   #'b_small'   #   #'c_medium'
     dataSildes = read_file('dataset/'+file_name+'.txt')
-    print(dataSildes[0].cardinality)
-    print(dataSildes[0].cardinality)
+
+    for el in dataSildes:
+        photolist.append(Photo(el.cardinality, el.size, el.tags))
+
+    for photo in photolist:
+        #if photo.getOrientation() == 'H':
+        slidelist.append(Slide(photo))
+
+    for slide in slidelist:
+        slideshow.addSlide(slide)
+
+    print "score " + str(slideshow.evaluate())
+
 
 
 if __name__ == "__main__":
