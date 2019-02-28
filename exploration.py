@@ -37,6 +37,8 @@ class GridCutter:
         self.slices_to_file = []
         self.cell_slice_used = []
 
+        self.num_ings = 2 ### T and M
+
 
 
     def groupingNodes(self):
@@ -81,7 +83,7 @@ class GridCutter:
 
             ## Check the rule max_are
             #################################################################
-            if self.max_area%2 == 0 and len(val)*2 <= self.max_area:
+            if (len(val)*self.num_ings)%2 == 0 and len(val)*self.num_ings <= self.max_area:
 
                 ## Find the min and max row and cols
                 for cell in val:
@@ -95,13 +97,62 @@ class GridCutter:
                         if cell[1] < key[1]: min_col = cell[1]
                         if cell[1] > key[1]: max_col = cell[1]
                         self.cell_slice_used.append(cell)
-                        # self.cells_used.append((row, col))
-
-                    ## Debuug
-                    ## print("cell: {} :: key: {}".format(cell, key))
 
                 ## Added the last slices
                 self.slices_to_file.append(((min_row, min_col), (max_row, max_col)))
+
+            else:
+                row_cells = []
+                col_cells = []
+                for cell in val:
+                    ## Check if the cell is used in another slice
+                    try:
+                        self.cell_slice_used.index(cell)
+                    except ValueError:
+                        if key[0] == cell[0]:
+                            row_cells.append(cell)
+                        elif key[1] == cell[1]:
+                            col_cells.append(cell)
+
+                ## Find the cells position
+                ## For Columns
+                if len(col_cells) >= len(row_cells):
+                    cells_to_use = col_cells
+                    min_col = max_col = key[1]
+                    min_row = max_row = key[0]
+
+                    ## Find the min and max rows
+                    for cell in val:
+                        if cell[0] < key[0]: min_row = cell[0]
+                        if cell[0] > key[0]: max_row = cell[0]
+                        self.cell_slice_used.append(cell)
+
+                    ## Added the last slices
+                    self.slices_to_file.append(((min_row, min_col), (max_row, max_col)))
+
+                ## Find the cells position
+                ## For Rows
+                else:
+                    min_col = max_col = key[1]
+                    min_row = max_row = key[0]
+
+                    ## Find the min and max rows
+                    for cell in val:
+                        if cell[1] < key[1]: min_col = cell[1]
+                        if cell[1] > key[1]: max_col = cell[1]
+                        self.cell_slice_used.append(cell)
+
+                    ## Added the last slices
+                    self.slices_to_file.append(((min_row, min_col), (max_row, max_col)))
+
+                    cells_to_use = row_cells
+
+                ## Debbug
+                # print("{}".format('-'*50))
+                # print("key: {}".format(key))
+                # print("rows: {}".format(row_cells))
+                # print("cols: {}".format(col_cells))
+                # print("cells to used {}".format(cells_to_use))
 
         print("Num Slices: {}".format(len(self.slices_to_file)))
         print("slices_to_file: {}".format(self.slices_to_file))
