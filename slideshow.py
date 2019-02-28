@@ -17,7 +17,9 @@ def read_file(file_path):
     items_corpus = []
     f = open(file_path, 'r')
     for line in f:
+        print(line.split(' '))
         items_corpus.append(line)
+
     f.close()
     return items_corpus
 
