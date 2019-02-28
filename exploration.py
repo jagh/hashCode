@@ -285,9 +285,9 @@ def read_file(filename):
     return first_line, grid
 
 
-def output(list_output):
+def output(list_output, file_name):
     len_slice = len(list_output)
-    with open("output.out", 'w') as output_final:
+    with open(file_name+'.out', 'w') as output_final:
         outline = []
         outline.append(str(len_slice))
         output_final.write("".join(outline) + "\n")
@@ -306,13 +306,15 @@ def output(list_output):
 
 
 def main():
-    first_line, grid = read_file('dataset/b_small.in')  #a_example.in') #b_small.in')
+    file_name='a_example'
+    first_line, grid = read_file('dataset/'+file_name+'.in') #b_small.in')  # #b_small.in')
+
     gc = GridCutter(grid, first_line)
     gc.explorer()
     # gc.extendSlice()
     # gc.groupingNodes()
-    out = gc.sliceComposition()
-    output(out)
+    out_slices = gc.sliceComposition()
+    output(out_slices, file_name)
 
 if __name__ == "__main__":
     main()
