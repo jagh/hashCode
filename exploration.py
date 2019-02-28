@@ -9,6 +9,7 @@ import sys
 import itertools
 from collections import deque
 from collections import OrderedDict
+from sortedcontainers import SortedDict
 
 
 class GridCutter:
@@ -43,7 +44,8 @@ class GridCutter:
         Input format: [(num_node[0], (cell_beg, cell_end)), ...
         Output format: [(cell_end[0], [cell_beg[0], cell_beg[1], cell_beg[2]]), ...
         """
-        group_nodes = OrderedDict()
+        # group_nodes = OrderedDict()
+        group_nodes = SortedDict()
 
         ## Gruped node as FIFO order
         for key, val in self.nodes.iteritems():
@@ -58,7 +60,7 @@ class GridCutter:
         # print("Extend slice:")
         # print("Nodes: {}".format(self.nodes))
         # print("Cells used: {}".format(self.cells_used))
-        # print("Fifo order: {}".format(group_nodes))
+        print("Fifo order: {}".format(group_nodes))
         return group_nodes
 
 
@@ -281,7 +283,7 @@ def read_file(filename):
 
 
 def main():
-    first_line, grid = read_file('dataset/b_small.in') #a_example.in')  # b_small.in') #b_small.in')
+    first_line, grid = read_file('dataset/b_small.in') # a_example.in') # b_small.in') #a_example.in')  # b_small.in') #b_small.in')
     gc = GridCutter(grid, first_line)
     gc.explorer()
     # gc.extendSlice()
