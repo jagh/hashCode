@@ -26,7 +26,7 @@ class GridCutter:
         self.row_count = row_count
         self.col_count = col_count
         self.min_ings = min_ings
-        self.max_area = 4 #max_area
+        self.max_area = max_area
 
         ## Exploration
         self.cells_used = []
@@ -79,9 +79,9 @@ class GridCutter:
             min_row = max_row = key[0]
             min_col = max_col = key[1]
 
-            ## For max_are%2
-            # print("num ")
-            if self.max_area%2 == 0:
+            ## Check the rule max_are
+            #################################################################
+            if self.max_area%2 == 0 and len(val)*2 <= self.max_area:
 
                 ## Find the min and max row and cols
                 for cell in val:
