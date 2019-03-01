@@ -5,7 +5,6 @@ from collections import OrderedDict
 import numpy as np
 
 
-
 DataSildes = collections.namedtuple('DataSildes', 'cardinality size tags id_photo')
 
 class SlideShow:
@@ -17,10 +16,9 @@ class SlideShow:
     def validation(self):
         vertical_Photos = OrderedDict()
 
-        ## Gruped node as FIFO order
+        ## Join vertical photo
         join_v_photo = []
         count = 0
-
         for photo in self.dataslides:
             if photo.cardinality == 'V':
                 join_v_photo.append(photo.id_photo)
@@ -40,25 +38,20 @@ class SlideShow:
             # print(photo)
         return self.slideshow_to_file
 
-
-
 def read_file(file_path):
     items_corpus = []
     f = open(file_path, 'r')
     f.readline()
     id_count = 0
     for line in f:
+        line = line.rstrip('\n')
         content = line.split(' ')
-        # DataSplit(name='cardinality', inputs=X_train, targets=y_train)
-        # DataSildes
         tags = []
         count = 0
-        # print content
         for i in content:
             if count == 0:
                 card=i
                 count += 1
-                # DataSildes(cardinality=i)
             elif count == 1:
                 size=i
                 count += 1
@@ -95,9 +88,7 @@ def main():
     dataSildes = read_file('dataset/'+file_name+'.txt')
     ss = SlideShow(dataSildes)
     slideshow_to_file = ss.validation()
-    # print(slideshow_to_file)
-
-    output(slideshow_to_file, 'e_shiny_selfies')
+    output(slideshow_to_file, file_name)
 
 if __name__ == "__main__":
     main()
