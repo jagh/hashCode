@@ -1,121 +1,94 @@
-###########################################################
-### Hash Code 2019                                      ###
-### Pizza Practice Problem                              ###
-### Team: SuicideSquad                                  ###
-###########################################################
-
-
-import sys
+import sys, os
 import itertools
 import collections
 from collections import OrderedDict
-
-DataSildes = collections.namedtuple('DataSildes', 'cardinality size tags')
-
-class Photo:
-    def __init__(self, orientation, nb, tags):
-        self.orientation = orientation
-        self.nb = nb
-        self.tags = tags
-
-    def getOrientation(self):
-        return self.orientation
-
-    def getTags(self):
-        return self.tags
-
-    def toStr(self):
-        return self.tags
+import numpy as np
 
 
-class Slide:
-    def __init__(self, photo):
-        self.photo = photo
-        self.tags = photo.getTags()
-
-    def getTags(self):
-        return self.tags
-
-    def intersection(self, toCompare):
-        return list(set(toCompare.getTags()) & set(self.tags))
-
-    def difference(self, toCompare):
-        return list(set(toCompare.getTags()) - set(self.tags))
-
-    def score(self, toCompare):
-        score1 = len(self.intersection(toCompare))
-        score2 = len(self.difference(toCompare))
-        score3 = len(toCompare.difference(self))
-        return min(score1, score2, score3)
-
+DataSildes = collections.namedtuple('DataSildes', 'cardinality size tags id_photo')
 
 class SlideShow:
-    def __init__(self):
+    def __init__(self, datasildes):
         self.slideshow = list()
+        self.dataslides = datasildes
+        self.slideshow_to_file = []
 
-    def addSlide(self, slide):
-        self.slideshow.append(slide)
+    def validation(self):
+        vertical_Photos = OrderedDict()
 
-    def evaluate(self):
-        total_score = 0
-        for i in range(len(self.slideshow)-1):
-            slide1 = self.slideshow[i]
-            slide2 = self.slideshow[i+1]
-            #slide1.intersection(slide2)
-            #slide1.diff(slide2)
-            #slide2.diff(slide1)
-            total_score += slide1.score(slide2)
-        return total_score
+        ## Join vertical photo
+        join_v_photo = []
+        count = 0
+        for photo in self.dataslides:
+            if photo.cardinality == 'V':
+                join_v_photo.append(photo.id_photo)
 
+                if len(join_v_photo) == 2:
+                    # print((join_v_photo[0], join_v_photo[1]))
+                    slide_joined = str(join_v_photo[0])+' '+str(join_v_photo[1])
+                    # self.slideshow_to_file.append((join_v_photo[0], join_v_photo[1]))
+                    self.slideshow_to_file.append(slide_joined )
+                    count += 1
+                else:
+                    count += 1
+
+            elif photo.cardinality == 'H':
+                self.slideshow_to_file.append(photo.id_photo)
+                count += 1
+            # print(photo)
+        return self.slideshow_to_file
 
 def read_file(file_path):
     items_corpus = []
     f = open(file_path, 'r')
     f.readline()
+    id_count = 0
     for line in f:
         line = line.rstrip('\n')
         content = line.split(' ')
-        # DataSplit(name='cardinality', inputs=X_train, targets=y_train)
-        # DataSildes
         tags = []
         count = 0
         for i in content:
             if count == 0:
                 card=i
                 count += 1
-                # DataSildes(cardinality=i)
             elif count == 1:
                 size=i
                 count += 1
             else:
                 tags.append(i)
                 count += 1
-        items_corpus.append(DataSildes(cardinality=card, size=size, tags=tags))
+        items_corpus.append(DataSildes(cardinality=card, size=size, tags=tags, id_photo=id_count))
+        id_count += 1
     f.close()
     return items_corpus
 
+def output(out, file_name):
+    size = len(out)
+    with open(file_name + '.out', 'w') as output_final:
+        outline = []
+        outline.append(str(size))
+        output_final.write("".join(outline) + "\n")
+        for i in range(len(out)):
+            outline = []
+            temp = out[i]
+            # print(type(temp))
+            if type(temp) == type(tuple()):
+                for j in temp:
+                    # print("j:"+ str(j))
+                    outline.append(str(j)+" ")
+            else:
+                outline.append(str(temp))
+            # print(outline)
+            output_final.write("".join(outline) + "\n")
 
 
 def main():
-    photolist = list()
-    slidelist = list()
-    slideshow = SlideShow()
-    file_name= 'b_lovely_landscapes' #''a_example'   #'b_small'   #   #'c_medium'
+    file_name='a_example'   #'e_shiny_selfies'  #'b_lovely_landscapes' #'b_lovely_landscapes'
     dataSildes = read_file('dataset/'+file_name+'.txt')
-
-    for el in dataSildes:
-        photolist.append(Photo(el.cardinality, el.size, el.tags))
-
-    for photo in photolist:
-        #if photo.getOrientation() == 'H':
-        slidelist.append(Slide(photo))
-
-    for slide in slidelist:
-        slideshow.addSlide(slide)
-
-    print "score " + str(slideshow.evaluate())
-
-
+    ss = SlideShow(dataSildes)
+    slideshow_to_file = ss.validation()
+    output(slideshow_to_file, file_name)
 
 if __name__ == "__main__":
     main()
